@@ -1,4 +1,5 @@
 
+using BtkAkademi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BtkAkademi.Controllers
@@ -9,9 +10,26 @@ namespace BtkAkademi.Controllers
         {
             return View();
         }
-         public IActionResult Apply()
+        public IActionResult Apply()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Apply([FromForm] Candidate model)
+        {
+            if (Repository.Applications.Any(c => c.Email.Equals(model.Email)))
+            {
+                ModelState.AddModelError("", "hata");
+            }
+            if (ModelState.IsValid)
+            {
+                Repository.Add(model);
+                return View("FeedBack", model);
+            }
+            return View();
+           
         }
         
     }
